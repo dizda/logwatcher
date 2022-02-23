@@ -114,6 +114,12 @@ impl LogWatcher {
             match resp {
                 Ok(len) => {
                     if len > 0 {
+                        if !line.contains("\n") {
+                            // if the line doesn't contain the line break, the full string hasn't been written yet
+                            sleep(Duration::from_millis(300));
+                            continue;
+                        }
+
                         let old_pos = self.pos;
                         self.pos += len as u64;
                         self.reader.seek(SeekFrom::Start(self.pos)).unwrap();
